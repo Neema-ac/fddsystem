@@ -53,7 +53,7 @@ def admin_dashboard():
         data = data[expected_features]
 
         # Fill any missing values
-        data = data.fillna(data.mean())
+        data = data.fillna(0)
 
         predictions = model.predict(data)
         data['Fraud Prediction'] = predictions
