@@ -41,6 +41,20 @@ def admin_dashboard():
         st.write("Data Preview:")
         st.dataframe(data.head())
 
+        # Match columns with model features
+        expected_features = model.feature_names_in_
+
+        # Filter to expected columns only (handle missing columns if any)
+        missing_cols = [col for col in expected_features if col not in data.columns]
+        if missing_cols:
+            st.error(f"The uploaded file is missing these required columns: {missing_cols}")
+            return
+
+        data = data[expected_features]
+
+        # Fill any missing values
+        data = data.fillna(data.mean())
+
         predictions = model.predict(data)
         data['Fraud Prediction'] = predictions
         st.success("Fraud predictions complete.")
@@ -48,6 +62,7 @@ def admin_dashboard():
 
         # Save to CSV for auditor
         data.to_csv('predictions.csv', index=False)
+
 
 def auditor_dashboard():
     st.title("📋 Auditor Panel")
